@@ -14,7 +14,6 @@ and declare your controller as the delegate and dataSource as with a simple UITa
     self.selector.dataSource = self;
     self.selector.delegate = self;
     self.selector.shouldBeTransparent = YES;
-
 ```
 
 

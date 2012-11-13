@@ -13,6 +13,7 @@
 
 
 
-@property (nonatomic,weak) IBOutlet IZValueSelectorView *selector;
+@property (nonatomic,weak) IBOutlet IZValueSelectorView *selectorVertical;
+@property (nonatomic,weak) IBOutlet IZValueSelectorView *selectorHorizontal;
 
 @end

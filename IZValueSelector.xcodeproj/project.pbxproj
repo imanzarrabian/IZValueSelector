@@ -21,6 +21,7 @@
 		0F483A8F1643E360003CAF09 /* IZValueSelectorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F483A8E1643E360003CAF09 /* IZValueSelectorView.m */; };
 		0F483A9616440F1D003CAF09 /* selectorRect.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F483A9416440F1C003CAF09 /* selectorRect.png */; };
 		0F483A9716440F1D003CAF09 /* selectorRect@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F483A9516440F1C003CAF09 /* selectorRect@2x.png */; };
+		0FFF8E7D16525F6600E2AC75 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FFF8E7C16525F6600E2AC75 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +45,7 @@
 		0F483A8E1643E360003CAF09 /* IZValueSelectorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IZValueSelectorView.m; path = Lib/IZValueSelectorView.m; sourceTree = "<group>"; };
 		0F483A9416440F1C003CAF09 /* selectorRect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = selectorRect.png; sourceTree = "<group>"; };
 		0F483A9516440F1C003CAF09 /* selectorRect@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectorRect@2x.png"; sourceTree = "<group>"; };
+		0FFF8E7C16525F6600E2AC75 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0FFF8E7D16525F6600E2AC75 /* QuartzCore.framework in Frameworks */,
 				0F483A6A1643E2FD003CAF09 /* UIKit.framework in Frameworks */,
 				0F483A6C1643E2FD003CAF09 /* Foundation.framework in Frameworks */,
 				0F483A6E1643E2FD003CAF09 /* CoreGraphics.framework in Frameworks */,
@@ -80,6 +83,7 @@
 		0F483A681643E2FD003CAF09 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0FFF8E7C16525F6600E2AC75 /* QuartzCore.framework */,
 				0F483A691643E2FD003CAF09 /* UIKit.framework */,
 				0F483A6B1643E2FD003CAF09 /* Foundation.framework */,
 				0F483A6D1643E2FD003CAF09 /* CoreGraphics.framework */,
@@ -316,6 +320,7 @@
 				0F483A8B1643E2FD003CAF09 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

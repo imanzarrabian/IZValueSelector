@@ -52,34 +52,27 @@
     }
     
     if (self.horizontalScrolling) {
-        
         //In this case user might have created a view larger than taller
-        _contentTableView = [[UITableView alloc] initWithFrame:CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.height, self.bounds.size.width)];        
+        _contentTableView = [[UITableView alloc] initWithFrame:CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.frame.size.height, self.frame.size.width)];
+        
+        //_contentTableView.center = self.center;
+       // _contentTableView = [[UITableView alloc] initWithFrame:self.bounds];
+        
+        NSLog(@"FRAME ON HORIZONTAL  %f, %f ,%f,  %f ",_contentTableView.frame.origin.x,_contentTableView.frame.origin.y,_contentTableView.frame.size.height,_contentTableView.frame.size.width);
     }
     else {
         _contentTableView = [[UITableView alloc] initWithFrame:self.bounds];
     }
     
-    if (self.debugEnabled) {
-        _contentTableView.layer.borderColor = [UIColor blueColor].CGColor;
-        _contentTableView.layer.borderWidth = 1.0;
-        _contentTableView.layer.cornerRadius = 10.0;
-        
-        _contentTableView.tableHeaderView.layer.borderColor = [UIColor blackColor].CGColor;
-        _contentTableView.tableFooterView.layer.borderColor = [UIColor blackColor].CGColor;
-    }
-
+    _contentTableView.layer.borderColor = [UIColor blueColor].CGColor;
+    _contentTableView.layer.borderWidth = 1.0;
+    _contentTableView.layer.cornerRadius = 10.0;
+    
+    _contentTableView.tableHeaderView.layer.borderColor = [UIColor redColor].CGColor;
+    _contentTableView.tableFooterView.layer.borderColor = [UIColor redColor].CGColor;
 
     // Initialization code
-    CGFloat OffsetCreated;
-    
-    //If this is an horizontal scrolling we have to rotate the table view
     if (self.horizontalScrolling) {
-        CGAffineTransform rotateTable = CGAffineTransformMakeRotation(-M_PI_2);
-        _contentTableView.transform = rotateTable;
-        
-        OffsetCreated = _contentTableView.frame.origin.x;
-        _contentTableView.frame = self.bounds;
     }
 
     _contentTableView.backgroundColor = [UIColor clearColor];
@@ -95,7 +88,7 @@
     }
     
     if (self.horizontalScrolling) {
-        _contentTableView.contentInset = UIEdgeInsetsMake( _selectionRect.origin.x ,  0,_contentTableView.frame.size.height - _selectionRect.origin.x - _selectionRect.size.width - 2*OffsetCreated, 0);
+        _contentTableView.contentInset = UIEdgeInsetsMake( _selectionRect.origin.x ,  0,_contentTableView.frame.size.height - _selectionRect.origin.x - _selectionRect.size.width, 0);
     }
     else {
         _contentTableView.contentInset = UIEdgeInsetsMake( _selectionRect.origin.y, 0, _contentTableView.frame.size.height - _selectionRect.origin.y - _selectionRect.size.height  , 0);
@@ -103,8 +96,23 @@
     _contentTableView.showsVerticalScrollIndicator = NO;
     _contentTableView.showsHorizontalScrollIndicator = NO;
 
+
+
+    //If this is an horizontal scrolling we have to rotate the table view
+    if (self.horizontalScrolling) {
+        //_contentTableView.layer.anchorPoint = self.bounds.origin;
+
+        CGAffineTransform rotateTable = CGAffineTransformMakeRotation(-M_PI_2);
+        _contentTableView.transform = rotateTable;
+        //_contentTableView.center = self.center;
+        NSLog(@"center  %f, %f AFTER ROTATION"lf.center.x,self.center.y);
+        NSLog(@"FRAME ON HORIZONTAL  %f, %f ,%f,  %f ",_contentTableView.frame.origin.x,_contentTableView.frame.origin.y,_contentTableView.frame.size.height,_contentTableView.frame.size.width);
+    }
+    
     [self addSubview:_contentTableView];
-    [self addSubview:selectionImageView];    
+    [self addSubview:selectionImageView];
+
+    
 }
 
 /*
@@ -149,29 +157,31 @@
         [contentSubV removeFromSuperview];
         
         UIView *viewToAdd = [self.dataSource selector:self viewForRowAtIndex:indexPath.row];
-        contentSubV = viewToAdd;
-        if (self.debugEnabled) {
-            viewToAdd.layer.borderWidth = 1.0;
-            viewToAdd.layer.borderColor = [UIColor redColor].CGColor;
+        if (self.horizontalScrolling) {
+         //   CGAffineTransform rotateTable = CGAffineTransformMakeRotation(M_PI_2);
+          //  viewToAdd.transform = rotateTable;
         }
+        contentSubV = viewToAdd;
+        viewToAdd.layer.borderWidth = 1.0;
+        viewToAdd.layer.borderColor = [UIColor redColor].CGColor;
         [cell.contentView addSubview:contentSubV];
     }
     else {
         
         UILabel *viewToAdd = (UILabel *)[self.dataSource selector:self viewForRowAtIndex:indexPath.row];
-        //This is a new cell so we just have to add the view        
-        if (self.debugEnabled) {
-            viewToAdd.layer.borderWidth = 1.0;
-            viewToAdd.layer.borderColor = [UIColor redColor].CGColor;
+        if (self.horizontalScrolling) {
+           // CGAffineTransform rotateTable = CGAffineTransformMakeRotation(M_PI_2);
+           // viewToAdd.transform = rotateTable;
         }
+        //This is a new cell so we just have to add the view
+        viewToAdd.layer.borderWidth = 1.0;
+        viewToAdd.layer.borderColor = [UIColor redColor].CGColor;
         [cell.contentView addSubview:viewToAdd];
 
     }
     
-    if (self.debugEnabled) {
-        cell.layer.borderColor = [UIColor greenColor].CGColor;
-        cell.layer.borderWidth = 1.0;
-    }
+    cell.layer.borderColor = [UIColor greenColor].CGColor;
+    cell.layer.borderWidth = 1.0;
     
     if (self.horizontalScrolling) {
         CGAffineTransform rotateTable = CGAffineTransformMakeRotation(M_PI_2);
@@ -201,21 +211,34 @@
 
 - (void)scrollToTheSelectedCell {
     
-    CGRect selectionRectConverted = [self convertRect:_selectionRect toView:_contentTableView];        
+    CGRect selectionRectConverted = [self convertRect:_selectionRect toView:_contentTableView];
+    if (self.horizontalScrolling) {
+        selectionRectConverted = CGRectMake(selectionRectConverted.origin.x, selectionRectConverted.origin.y, selectionRectConverted.size.height, selectionRectConverted.size.width);
+    }
+        
     NSArray *indexPathArray = [_contentTableView indexPathsForRowsInRect:selectionRectConverted];
     
     CGFloat intersectionHeight = 0.0;
     NSIndexPath *selectedIndexPath = nil;
     
     for (NSIndexPath *index in indexPathArray) {
+        NSLog(@"indexs %d,",index.row);
         //looping through the closest cells to get the closest one
         UITableViewCell *cell = [_contentTableView cellForRowAtIndexPath:index];
         CGRect intersectedRect = CGRectIntersection(cell.frame, selectionRectConverted);
-      
-        if (intersectedRect.size.height>=intersectionHeight) {
-            selectedIndexPath = index;
-            intersectionHeight = intersectedRect.size.height;
+        if(self.horizontalScrolling) {
+            if (intersectedRect.size.width>=intersectionHeight) {
+                selectedIndexPath = index;
+                intersectionHeight = intersectedRect.size.width;
+            }
         }
+        else {
+            if (intersectedRect.size.height>=intersectionHeight) {
+                selectedIndexPath = index;
+                intersectionHeight = intersectedRect.size.height;
+            }
+        }
+
     }
     if (selectedIndexPath!=nil) {
         //As soon as we elected an indexpath we just have to scroll to it

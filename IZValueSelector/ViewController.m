@@ -9,19 +9,33 @@
 #import "ViewController.h"
 
 @interface ViewController ()
-
+@property (nonatomic,assign) BOOL wantHorizontal;
 @end
 
 @implementation ViewController
-@synthesize selector = _selector;
+@synthesize selectorVertical = _selectorVertical;
+@synthesize selectorHorizontal = _selectorHorizontal;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    //self.wantHorizontal = YES;
 
+    
     //YOU CAN ALSO ASSIGN THE DATA SOURCE AND THE DELEGATE IN CODE (IT'S ALREADY DONE IN NIB, BUT DO AS YOU PREFER)
-    self.selector.dataSource = self;
-    self.selector.delegate = self;
-    self.selector.shouldBeTransparent = YES;
+    self.selectorVertical.dataSource = self;
+    self.selectorVertical.delegate = self;
+    self.selectorVertical.shouldBeTransparent = YES;
+    self.selectorVertical.horizontalScrolling = NO;
+    
+    self.selectorHorizontal.dataSource = self;
+    self.selectorHorizontal.delegate = self;
+    self.selectorHorizontal.shouldBeTransparent = YES;
+    self.selectorHorizontal.horizontalScrolling = YES;
+    
+    //You can toggle Debug mode on selectors to see the layout
+    self.selectorVertical.debugEnabled = NO;
+    self.selectorHorizontal.debugEnabled = NO;
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -37,13 +51,25 @@
 }
 
 
+
+//ONLY ONE OF THESE WILL GET CALLED (DEPENDING ON the horizontalScrolling property Value)
 - (CGFloat)rowHeightInSelector:(IZValueSelectorView *)valueSelector {
     return 70.0;
 }
 
+- (CGFloat)rowWidthInSelector:(IZValueSelectorView *)valueSelector {
+    return 70.0;
+}
+
+
 - (UIView *)selector:(IZValueSelectorView *)valueSelector viewForRowAtIndex:(NSInteger)index {
-    
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.selector.frame.size.width, 70)];
+    UILabel * label = nil;
+    if (valueSelector == self.selectorHorizontal) {
+        label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 70, self.selectorHorizontal.frame.size.height)];
+    }
+    else {
+        label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.selectorVertical.frame.size.width, 70)];
+    }
     label.text = [NSString stringWithFormat:@"%d",index];
     label.textAlignment =  NSTextAlignmentCenter;
     label.backgroundColor = [UIColor clearColor];
@@ -56,7 +82,13 @@
     //Basically the x will be 0
     //y will be the origin of your image
     //width and height will be the same as in your selector image
-    return CGRectMake(0.0, 195.0, 90.0, 70.0);
+    if (valueSelector == self.selectorHorizontal) {
+        return CGRectMake(self.selectorHorizontal.frame.size.width/2 - 35.0, 0.0, 70.0, 90.0);
+    }
+    else {
+        return CGRectMake(0.0, self.selectorVertical.frame.size.height/2 - 35.0, 90.0, 70.0);
+    }
+
 }
 
 #pragma IZValueSelector delegate

@@ -50,6 +50,19 @@
     return _selectedImageName;
 }
 
+- (void)selectRowAtIndex:(NSUInteger)index animated:(BOOL)animated
+{
+    selectedIndexPath = [NSIndexPath indexPathForRow:index inSection:0];
+    [_contentTableView scrollToRowAtIndexPath:selectedIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:animated];
+    [self.delegate selector:self didSelectRowAtIndex:selectedIndexPath.row];
+    [_contentTableView reloadData];
+}
+
+- (void)selectRowAtIndex:(NSUInteger)index
+{
+    [self selectRowAtIndex:index animated:YES];
+}
+
 - (void)createContentTableView {
     
     UIImageView *selectionImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:[self selectedImageName]]];

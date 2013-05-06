@@ -36,6 +36,8 @@
 @property (nonatomic, strong) NSString *selectedImageName;
 @property (nonatomic, assign) BOOL debugEnabled;
 
+- (void)selectRowAtIndex:(NSUInteger)index;
+- (void)selectRowAtIndex:(NSUInteger)index animated:(BOOL)animated;
 
 - (void)reloadData;
 

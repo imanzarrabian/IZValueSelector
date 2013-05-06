@@ -17,23 +17,27 @@
 
 @protocol IZValueSelectorViewDataSource <NSObject>
 - (NSInteger)numberOfRowsInSelector:(IZValueSelectorView *)valueSelector;
-- (UIView *)selector:(IZValueSelectorView *)valueSelector viewForRowAtIndex:(NSInteger) index;
+- (UIView *)selector:(IZValueSelectorView *)valueSelector viewForRowAtIndex:(NSInteger)index;
 - (CGRect)rectForSelectionInSelector:(IZValueSelectorView *)valueSelector;
 - (CGFloat)rowHeightInSelector:(IZValueSelectorView *)valueSelector;
 - (CGFloat)rowWidthInSelector:(IZValueSelectorView *)valueSelector;
+@optional
+- (UIView *)selector:(IZValueSelectorView *)valueSelector viewForRowAtIndex:(NSInteger)index selected:(BOOL)selected;
 @end
 
 
 
 @interface IZValueSelectorView : UIView <UITableViewDataSource,UITableViewDelegate>
 
-@property (nonatomic,assign) IBOutlet id <IZValueSelectorViewDelegate> delegate;
-@property (nonatomic,assign) IBOutlet id <IZValueSelectorViewDataSource> dataSource;
-@property (nonatomic,assign) BOOL shouldBeTransparent;
-@property (nonatomic,assign) BOOL horizontalScrolling;
+@property (nonatomic, assign) IBOutlet NSObject<IZValueSelectorViewDelegate> *delegate;
+@property (nonatomic, assign) IBOutlet NSObject<IZValueSelectorViewDataSource> *dataSource;
+@property (nonatomic, assign) BOOL shouldBeTransparent;
+@property (nonatomic, assign) BOOL horizontalScrolling;
+@property (nonatomic, strong) NSString *selectedImageName;
+@property (nonatomic, assign) BOOL debugEnabled;
 
-@property (nonatomic,assign) BOOL debugEnabled;
-
+- (void)selectRowAtIndex:(NSUInteger)index;
+- (void)selectRowAtIndex:(NSUInteger)index animated:(BOOL)animated;
 
 - (void)reloadData;
 

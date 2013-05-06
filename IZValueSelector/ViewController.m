@@ -10,6 +10,8 @@
 
 @interface ViewController ()
 @property (nonatomic,assign) BOOL wantHorizontal;
+- (IBAction)setToOne:(id)sender;
+- (IBAction)setToTwo:(id)sender;
 @end
 
 @implementation ViewController
@@ -38,6 +40,15 @@
 
 }
 
+- (IBAction)setToOne:(id)sender
+{
+    [self.selectorVertical selectRowAtIndex:1];
+}
+- (IBAction)setToTwo:(id)sender
+{
+    [self.selectorVertical selectRowAtIndex:2];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -61,8 +72,12 @@
     return 70.0;
 }
 
+- (UIView *)selector:(IZValueSelectorView *)valueSelector viewForRowAtIndex:(NSInteger)index
+{
+    return [self selector:valueSelector viewForRowAtIndex:index selected:NO];
+}
 
-- (UIView *)selector:(IZValueSelectorView *)valueSelector viewForRowAtIndex:(NSInteger)index {
+- (UIView *)selector:(IZValueSelectorView *)valueSelector viewForRowAtIndex:(NSInteger)index selected:(BOOL)selected {
     UILabel * label = nil;
     if (valueSelector == self.selectorHorizontal) {
         label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 70, self.selectorHorizontal.frame.size.height)];
@@ -73,6 +88,11 @@
     label.text = [NSString stringWithFormat:@"%d",index];
     label.textAlignment =  NSTextAlignmentCenter;
     label.backgroundColor = [UIColor clearColor];
+    if (selected) {
+        label.textColor = [UIColor redColor];
+    } else {
+        label.textColor = [UIColor blackColor];
+    }
     return label;
 }
 

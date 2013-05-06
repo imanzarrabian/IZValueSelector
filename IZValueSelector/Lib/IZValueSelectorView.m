@@ -13,6 +13,7 @@
 @implementation IZValueSelectorView {
     UITableView *_contentTableView;
     CGRect _selectionRect;
+    NSIndexPath *selectedIndexPath;
 }
 
 @synthesize shouldBeTransparent = _shouldBeTransparent;
@@ -20,6 +21,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.horizontalScrolling = NO;
+        selectedIndexPath = nil;
     }
     return self;
 }
@@ -40,11 +42,30 @@
     [super layoutSubviews];
 }
 
+- (NSString *)selectedImageName
+{
+    if (!_selectedImageName) {
+        _selectedImageName = @"selectorRect";
+    }
+    return _selectedImageName;
+}
 
+- (void)selectRowAtIndex:(NSUInteger)index animated:(BOOL)animated
+{
+    selectedIndexPath = [NSIndexPath indexPathForRow:index inSection:0];
+    [_contentTableView scrollToRowAtIndexPath:selectedIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:animated];
+    [self.delegate selector:self didSelectRowAtIndex:selectedIndexPath.row];
+    [_contentTableView reloadData];
+}
+
+- (void)selectRowAtIndex:(NSUInteger)index
+{
+    [self selectRowAtIndex:index animated:YES];
+}
 
 - (void)createContentTableView {
-
-    UIImageView *selectionImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"selectorRect"]];
+    
+    UIImageView *selectionImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:[self selectedImageName]]];
     _selectionRect = [self.dataSource rectForSelectionInSelector:self];
     selectionImageView.frame = _selectionRect;
     if (self.shouldBeTransparent) {
@@ -54,7 +75,7 @@
     if (self.horizontalScrolling) {
         
         //In this case user might have created a view larger than taller
-        _contentTableView = [[UITableView alloc] initWithFrame:CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.height, self.bounds.size.width)];        
+        _contentTableView = [[UITableView alloc] initWithFrame:CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.height, self.bounds.size.width)];
     }
     else {
         _contentTableView = [[UITableView alloc] initWithFrame:self.bounds];
@@ -68,8 +89,8 @@
         _contentTableView.tableHeaderView.layer.borderColor = [UIColor blackColor].CGColor;
         _contentTableView.tableFooterView.layer.borderColor = [UIColor blackColor].CGColor;
     }
-
-
+    
+    
     // Initialization code
     CGFloat OffsetCreated;
     
@@ -81,7 +102,7 @@
         OffsetCreated = _contentTableView.frame.origin.x;
         _contentTableView.frame = self.bounds;
     }
-
+    
     _contentTableView.backgroundColor = [UIColor clearColor];
     _contentTableView.delegate = self;
     _contentTableView.dataSource = self;
@@ -102,19 +123,19 @@
     }
     _contentTableView.showsVerticalScrollIndicator = NO;
     _contentTableView.showsHorizontalScrollIndicator = NO;
-
+    
     [self addSubview:_contentTableView];
-    [self addSubview:selectionImageView];    
+    [self addSubview:selectionImageView];
 }
 
 /*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
+ // Only override drawRect: if you perform custom drawing.
+ // An empty implementation adversely affects performance during animation.
+ - (void)drawRect:(CGRect)rect
+ {
+ // Drawing code
+ }
+ */
 
 
 
@@ -147,8 +168,13 @@
         
         //This will release the previous contentSubV
         [contentSubV removeFromSuperview];
-        
-        UIView *viewToAdd = [self.dataSource selector:self viewForRowAtIndex:indexPath.row];
+        BOOL selected = indexPath.row == selectedIndexPath.row;
+        UIView *viewToAdd = nil;
+        if ([self.dataSource respondsToSelector:@selector(selector:viewForRowAtIndex:selected:)]) {
+            viewToAdd = [self.dataSource selector:self viewForRowAtIndex:indexPath.row selected:selected];
+        } else {
+            viewToAdd = [self.dataSource selector:self viewForRowAtIndex:indexPath.row];
+        }
         contentSubV = viewToAdd;
         if (self.debugEnabled) {
             viewToAdd.layer.borderWidth = 1.0;
@@ -157,15 +183,20 @@
         [cell.contentView addSubview:contentSubV];
     }
     else {
-        
-        UILabel *viewToAdd = (UILabel *)[self.dataSource selector:self viewForRowAtIndex:indexPath.row];
-        //This is a new cell so we just have to add the view        
+        BOOL selected = indexPath.row == selectedIndexPath.row;
+        UIView *viewToAdd = nil;
+        if ([self.dataSource respondsToSelector:@selector(selector:viewForRowAtIndex:selected:)]) {
+            viewToAdd = [self.dataSource selector:self viewForRowAtIndex:indexPath.row selected:selected];
+        } else {
+            viewToAdd = [self.dataSource selector:self viewForRowAtIndex:indexPath.row];
+        }
+        //This is a new cell so we just have to add the view
         if (self.debugEnabled) {
             viewToAdd.layer.borderWidth = 1.0;
             viewToAdd.layer.borderColor = [UIColor redColor].CGColor;
         }
         [cell.contentView addSubview:viewToAdd];
-
+        
     }
     
     if (self.debugEnabled) {
@@ -182,8 +213,10 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (tableView == _contentTableView) {
+        selectedIndexPath = indexPath;
         [_contentTableView scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionBottom animated:YES];
         [self.delegate selector:self didSelectRowAtIndex:indexPath.row];
+        [_contentTableView reloadData];
     }
 }
 
@@ -201,17 +234,16 @@
 
 - (void)scrollToTheSelectedCell {
     
-    CGRect selectionRectConverted = [self convertRect:_selectionRect toView:_contentTableView];        
+    CGRect selectionRectConverted = [self convertRect:_selectionRect toView:_contentTableView];
     NSArray *indexPathArray = [_contentTableView indexPathsForRowsInRect:selectionRectConverted];
     
     CGFloat intersectionHeight = 0.0;
-    NSIndexPath *selectedIndexPath = nil;
     
     for (NSIndexPath *index in indexPathArray) {
         //looping through the closest cells to get the closest one
         UITableViewCell *cell = [_contentTableView cellForRowAtIndexPath:index];
         CGRect intersectedRect = CGRectIntersection(cell.frame, selectionRectConverted);
-      
+        
         if (intersectedRect.size.height>=intersectionHeight) {
             selectedIndexPath = index;
             intersectionHeight = intersectedRect.size.height;
@@ -221,6 +253,7 @@
         //As soon as we elected an indexpath we just have to scroll to it
         [_contentTableView scrollToRowAtIndexPath:selectedIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
         [self.delegate selector:self didSelectRowAtIndex:selectedIndexPath.row];
+        [_contentTableView reloadData];
     }
 }
 

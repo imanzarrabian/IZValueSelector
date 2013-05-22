@@ -37,6 +37,8 @@
     //You can toggle Debug mode on selectors to see the layout
     self.selectorVertical.debugEnabled = NO;
     self.selectorHorizontal.debugEnabled = NO;
+    
+    [[self selectorHorizontal] setDecelerates:NO];
 
 }
 

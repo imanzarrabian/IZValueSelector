@@ -35,6 +35,7 @@
 @property (nonatomic, assign) BOOL horizontalScrolling;
 @property (nonatomic, strong) NSString *selectedImageName;
 @property (nonatomic, assign) BOOL debugEnabled;
+@property (nonatomic, assign) BOOL decelerates;
 
 - (void)selectRowAtIndex:(NSUInteger)index;
 - (void)selectRowAtIndex:(NSUInteger)index animated:(BOOL)animated;

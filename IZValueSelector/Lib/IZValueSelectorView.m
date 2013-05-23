@@ -31,6 +31,7 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         self.horizontalScrolling = NO;
+        self.decelerates = YES;
     }
     return self;
 }
@@ -223,11 +224,19 @@
 #pragma mark Scroll view methods
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    [self scrollToTheSelectedCell];
+    if ([self decelerates]) {
+        [self scrollToTheSelectedCell];
+    }
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    if (!decelerate) {
+    if (!decelerate) { 
+        [self scrollToTheSelectedCell];
+    }
+}
+
+-(void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView{
+    if (![self decelerates]) {
         [self scrollToTheSelectedCell];
     }
 }

@@ -15,11 +15,10 @@ and declare your controller as the delegate and dataSource as with a simple UITa
     self.selector.delegate = self;
     self.selector.shouldBeTransparent = YES;
     self.selector.horizontalScrolling = YES;
-    
-    //You can toggle Debug mode on selectors to see the layout
-    self.selector.debugEnabled = NO;
-    
     self.selector.decelerates = NO;
+
+    //You can toggle Debug mode on selectors to see the layout
+    self.selector.debugEnabled = NO; 
 ```
 
 

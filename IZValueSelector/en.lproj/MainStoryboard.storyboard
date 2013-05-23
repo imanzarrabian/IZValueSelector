@@ -14,7 +14,7 @@
                         <subviews>
                             <view contentMode="scaleToFill" id="iLf-9i-PVT" customClass="IZValueSelectorView">
                                 <rect key="frame" x="15" y="350" width="285" height="90"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" red="1" green="0.84042119999999998" blue="0.50640893149999999" alpha="1" colorSpace="calibratedRGB"/>
                                 <connections>
                                     <outlet property="dataSource" destination="2" id="rQ1-GH-zn6"/>
